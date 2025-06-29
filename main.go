@@ -5,7 +5,7 @@ import "net/http"
 func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World! Pratik Sharma AWS"))
+		w.Write([]byte("Hello, World! Pratik Sharma AWS without any changes"))
 	})
 	server := &http.Server{
 		Addr:    ":8070",
