@@ -14,15 +14,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Login to docker hub
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: build docker image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/ciaws .
+    - name: push docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/ciaws:latest
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.24'
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: pull docker image
+      run: docker pull ${{ secrets.DOCKER_USERNAME }}/ciaws:latest
+    - name: stop old container
+      run: docker stop ciaws || true
+    - name: remove old container
+      run: docker rm ciaws || true
+    - name: run new container
+      run: docker run -d --name ciaws -p 80:8070
