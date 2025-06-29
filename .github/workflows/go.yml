@@ -34,4 +34,4 @@ jobs:
     - name: remove old container
       run: docker rm ciaws || true
     - name: run new container
-      run: docker run -d --name ciaws -p 80:8070
+      run: docker run -d -p 80:8070 --name ciaws ${{ secrets.DOCKER_USERNAME }}/ciaws:latest
